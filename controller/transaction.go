@@ -136,11 +136,11 @@ func GetTransactionDetail(c *gin.Context) {
 
 	ts = append(ts, t)
 
-	if ts != nil {
+	if t.Id != 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "success",
 			"status":  http.StatusOK,
-			"data":    ts,
+			"data":    t,
 		})
 	} else {
 		c.JSON(http.StatusNoContent, gin.H{
