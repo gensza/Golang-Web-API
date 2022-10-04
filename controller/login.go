@@ -14,28 +14,21 @@ import (
 )
 
 func Login(c *gin.Context) {
+	var bind model.Login
 
-	var log model.Login
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 
-	err := c.ShouldBindJSON(&log)
-	if err != nil {
-		for _, e := range err.(validator.ValidationErrors) {
-			errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  http.StatusBadRequest,
-				"message": errorMessage,
-			})
-			return
-		}
-	}
+	cekUser := database.InitDB().QueryRow("SELECT username, password FROM tb_user WHERE username = ?", username).Scan(&bind.Username, &bind.Password)
+	cekPass := bcrypt.CompareHashAndPassword([]byte(bind.Password), []byte(password))
 
-	if log.Username != "myname" {
+	if cekUser != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"status":  http.StatusUnauthorized,
 			"message": "wrong username",
 		})
 	} else {
-		if log.Password != "myname123" {
+		if cekPass != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"status":  http.StatusUnauthorized,
 				"message": "wrong password",
@@ -44,7 +37,7 @@ func Login(c *gin.Context) {
 
 			sign := jwt.New(jwt.GetSigningMethod("HS256"))
 			claims := sign.Claims.(jwt.MapClaims)
-			claims["username"] = log.Username
+			claims["username"] = username
 			claims["email"] = "gensza@gmail.com"
 			claims["exp"] = time.Now().Add(time.Hour * 168).Unix()
 			token, err := sign.SignedString([]byte("secret-gin-gonic"))

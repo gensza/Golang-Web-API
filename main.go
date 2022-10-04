@@ -6,17 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt"
 )
-
-type CostumValidator struct {
-	validator *validator.Validate
-}
-
-func (cv *CostumValidator) Validate(i interface{}) error {
-	return cv.validator.Struct(i)
-}
 
 func main() {
 
