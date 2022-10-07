@@ -5,6 +5,6 @@ type BookModel struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Price       string `json:"price"`
-	Rating      int    `json:"rating"`
+	Rating      string `json:"rating"`
 	Discount    int    `json:"discount"`
 }

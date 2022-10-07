@@ -12,9 +12,6 @@ import (
 
 func GetBooks(c *gin.Context) {
 
-	var book model.BookModel
-	var books []model.BookModel
-
 	offset := c.Query("offset")
 	page := c.Query("page")
 	limit := c.Query("limit")
@@ -33,33 +30,20 @@ func GetBooks(c *gin.Context) {
 	if page != "" {
 		pageOffset = (limitInt * pageInt) - limitInt
 	}
-	var query = "SELECT id, title, description, price, rating, discount FROM books WHERE 1=1"
 
-	if rating != "" {
-		query = query + " AND rating = " + rating
-	}
+	var data model.BookModel
 
-	fmt.Println(query)
+	data.Rating = rating
 
-	rows, err := database.InitDB().Query(query+" ORDER BY id DESC LIMIT ?,?", pageOffset, limit)
-	if err != nil {
-		fmt.Println("DB Query : ", err.Error())
-	}
+	result := model.GetBooksModel(data, pageOffset, limit)
 
-	for rows.Next() {
-		err = rows.Scan(&book.Id, &book.Title, &book.Description, &book.Price, &book.Rating, &book.Discount)
-		if err != nil {
-			fmt.Println("Scan :", err.Error())
-		}
-		books = append(books, book)
-	}
-	defer rows.Close()
+	// fmt.Println(err)
 
-	if books != nil {
+	if result != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "success",
 			"status":  http.StatusOK,
-			"data":    books,
+			"data":    result,
 		})
 	} else {
 		c.JSON(http.StatusNoContent, gin.H{

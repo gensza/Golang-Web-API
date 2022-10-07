@@ -31,11 +31,11 @@ func auth(c *gin.Context) {
 
 		return []byte("secret-gin-gonic"), nil
 	})
-	fmt.Println(token)
-	fmt.Println(err)
+	// fmt.Println(token)
+	// fmt.Println(err)
 
 	if token != nil && err == nil {
-		fmt.Println("token verified")
+		// fmt.Println("token verified")
 	} else {
 		result := gin.H{
 			"message": "not authorized",
