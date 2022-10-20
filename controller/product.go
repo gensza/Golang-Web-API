@@ -62,5 +62,29 @@ func DelProduct(c *gin.Context) {
 			"status":  http.StatusBadRequest,
 		})
 	}
+}
 
+func InsertProduct(c *gin.Context) {
+
+	var title = c.PostForm("title")
+	var price = c.PostForm("price")
+
+	var data model.ProductModel
+
+	data.Title = title
+	data.Price, _ = strconv.Atoi(price)
+
+	err := model.InsertProductsModel(data)
+
+	if err == nil {
+		c.JSON(http.StatusCreated, gin.H{
+			"message": "success",
+			"status":  http.StatusCreated,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err,
+			"status":  http.StatusBadRequest,
+		})
+	}
 }

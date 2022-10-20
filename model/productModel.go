@@ -48,3 +48,16 @@ func DelProductsModel(id int) interface{} {
 
 	return err
 }
+
+func InsertProductsModel(data ProductModel) interface{} {
+
+	var query = "INSERT INTO products (title,price) VALUES (?,?)"
+
+	result, err := database.InitDB().Query(query, data.Title, data.Price)
+	if err != nil {
+		fmt.Println("DB Query : ", err.Error())
+	}
+	defer result.Close()
+
+	return err
+}
